@@ -1,0 +1,37 @@
+[project]
+name = "pet_passport"
+version = "1.0.0"
+description = "Local-first digital pet passport for web, Android and iOS."
+requires-python = ">=3.10"
+dependencies = [
+  "flet==1.0.1",
+  "flet-secure-storage==1.0.1",
+  "flet-local-auth==1.0.1",
+  "segno==1.6.6",
+]
+
+[tool.flet.app]
+path = "src"
+module = "main"
+exclude = ["__pycache__", "*.pyc"]
+
+[tool.flet]
+org = "pt.petpassport"
+product = "Pet Passport"
+bundle_id = "pt.petpassport.pet_passport"
+source_packages = ["segno"]
+permissions = ["biometric"]
+
+[tool.flet.splash]
+color = "#F5FAF8"
+dark_color = "#102B26"
+
+[tool.flet.web]
+route_url_strategy = "hash"
+
+[tool.flet.android.permission]
+"android.permission.USE_BIOMETRIC" = true
+"android.permission.USE_FINGERPRINT" = true
+
+[tool.flet.ios.info]
+NSFaceIDUsageDescription = "O Pet Passport usa Face ID para proteger os dados dos seus animais."
