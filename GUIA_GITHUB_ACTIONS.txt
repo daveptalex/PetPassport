@@ -1,0 +1,434 @@
+PET PASSPORT - GUIA PASSO A PASSO PARA GITHUB ACTIONS
+=====================================================
+
+Objetivo
+--------
+Compilar o projeto Pet Passport, feito em Python/Flet, diretamente nos servidores do GitHub e obter:
+
+  - APK: para instalar diretamente num dispositivo Android.
+  - AAB: formato recomendado para publicação posterior na Google Play Store.
+
+O projeto já inclui o workflow correto em:
+
+  .github/workflows/build-android.yml
+
+Também existe uma cópia visível na raiz:
+
+  WORKFLOW_GITHUB_ACTIONS.yml
+
+Essa cópia serve apenas de segurança caso o gestor de ficheiros do Android esconda a pasta ".github".
+
+
+PARTE 1 - PREPARAR OS FICHEIROS
+===============================
+
+1. Descompacte o ficheiro:
+
+   PetPassport_GitHub_Actions_V2.zip
+
+2. Dentro encontrará a pasta:
+
+   PetPassport
+
+3. O conteúdo principal dessa pasta deve incluir:
+
+   .github/
+   src/
+   tests/
+   pyproject.toml
+   requirements.txt
+   README.md
+   GUIA_GITHUB_ACTIONS.txt
+   WORKFLOW_GITHUB_ACTIONS.yml
+   e os restantes scripts do projeto.
+
+IMPORTANTE:
+A pasta ".github" começa por um ponto e alguns gestores de ficheiros Android escondem-na.
+Se não a vir, não significa necessariamente que não exista.
+
+
+PARTE 2 - CRIAR O REPOSITÓRIO NO GITHUB
+========================================
+
+4. Abra no navegador:
+
+   https://github.com/
+
+5. Entre na sua conta GitHub.
+
+6. Prima o botão "+" no canto superior direito e escolha:
+
+   New repository
+
+7. Em "Repository name", por exemplo, escreva:
+
+   PetPassport
+
+8. Pode escolher:
+
+   Private  - recomendado enquanto estiver a desenvolver a aplicação.
+   Public   - se quiser que qualquer pessoa veja o código.
+
+9. NÃO é necessário adicionar README, .gitignore ou licença, porque o projeto já contém os ficheiros necessários.
+
+10. Prima:
+
+   Create repository
+
+
+PARTE 3 - ENVIAR O PROJETO PARA O GITHUB PELO NAVEGADOR
+========================================================
+
+11. No novo repositório, escolha:
+
+   Add file -> Upload files
+
+12. Carregue TODO o conteúdo que está dentro da pasta PetPassport.
+
+ATENÇÃO:
+O ficheiro pyproject.toml deve ficar na RAIZ do repositório.
+A estrutura correta no GitHub deve ser semelhante a:
+
+   PetPassport (repositório)
+   |
+   |-- .github/
+   |   `-- workflows/
+   |       `-- build-android.yml
+   |
+   |-- src/
+   |   |-- main.py
+   |   |-- core.py
+   |   `-- assets/
+   |
+   |-- tests/
+   |-- pyproject.toml
+   |-- requirements.txt
+   |-- README.md
+   `-- ...
+
+NÃO deve ficar assim:
+
+   PetPassport/PetPassport/pyproject.toml
+
+O pyproject.toml tem de aparecer diretamente na página principal do repositório.
+
+13. No campo de commit pode escrever:
+
+   Pet Passport initial upload
+
+14. Prima:
+
+   Commit changes
+
+
+PARTE 4 - SE A PASTA .github NÃO TIVER SIDO ENVIADA
+====================================================
+
+Se, depois do upload, não vir no repositório:
+
+   .github/workflows/build-android.yml
+
+faça o seguinte:
+
+15. Abra o ficheiro da raiz:
+
+   WORKFLOW_GITHUB_ACTIONS.yml
+
+16. Copie todo o seu conteúdo.
+
+17. No GitHub escolha:
+
+   Add file -> Create new file
+
+18. No campo do nome do ficheiro escreva EXATAMENTE:
+
+   .github/workflows/build-android.yml
+
+O GitHub cria automaticamente as duas pastas.
+
+19. Cole o conteúdo que copiou de WORKFLOW_GITHUB_ACTIONS.yml.
+
+20. Prima:
+
+   Commit changes
+
+Depois disso o GitHub Actions deverá reconhecer o workflow.
+
+
+PARTE 5 - ATIVAR / ABRIR GITHUB ACTIONS
+=======================================
+
+21. No topo do repositório abra o separador:
+
+   Actions
+
+22. Se o GitHub mostrar uma página a pedir autorização para utilizar Actions neste repositório, ative/autorize os workflows.
+
+23. Na coluna esquerda deverá aparecer:
+
+   Pet Passport - Android APK e AAB
+
+24. Abra esse workflow.
+
+
+PARTE 6 - COMPILAR O APK E O AAB
+================================
+
+25. Prima:
+
+   Run workflow
+
+26. Confirme a branch, normalmente:
+
+   main
+
+27. Em "O que pretende compilar?" escolha uma das opções:
+
+   both  = compilar APK + AAB
+   apk   = compilar apenas APK
+   aab   = compilar apenas AAB
+
+Para a primeira compilação recomendo:
+
+   both
+
+28. Prima novamente o botão verde:
+
+   Run workflow
+
+29. Surgirá uma nova execução na lista.
+
+30. Abra essa execução para acompanhar os passos.
+
+O workflow executará primeiro:
+
+   Testes Python
+
+Depois, se tudo estiver correto, executará em paralelo:
+
+   Compilar APK
+   Compilar AAB
+
+O próprio workflow oficial do Flet prepara o toolchain necessário e utiliza cache para acelerar builds posteriores.
+
+
+PARTE 7 - DESCARREGAR O APK E AAB
+=================================
+
+31. Quando a execução apresentar sucesso, abra a página dessa execução.
+
+32. Na parte inferior procure a secção:
+
+   Artifacts
+
+33. Deverá encontrar nomes semelhantes a:
+
+   PetPassport-APK-1
+   PetPassport-AAB-1
+
+O número aumenta em cada execução.
+
+34. Descarregue:
+
+   PetPassport-APK-...
+
+para obter o build APK.
+
+35. Descarregue:
+
+   PetPassport-AAB-...
+
+para obter o build AAB.
+
+O Flet Build Action cria arquivos próprios, normalmente chamados:
+
+   flet-apk.zip
+   flet-aab.zip
+
+O arquivo do APK contém o ficheiro .apk e checksums.
+O arquivo do AAB contém o ficheiro .aab e checksums.
+
+36. Extraia o arquivo descarregado se necessário.
+
+37. Para instalação direta no Android, utilize o ficheiro com extensão:
+
+   .apk
+
+
+PARTE 8 - INSTALAR O APK NO ANDROID
+===================================
+
+38. Transfira ou abra o APK no telemóvel Android.
+
+39. Se o Android bloquear a instalação, autorize temporariamente a opção de instalar aplicações desconhecidas para a aplicação que está a abrir o APK, por exemplo o navegador ou gestor de ficheiros.
+
+40. Instale o Pet Passport.
+
+41. Depois da instalação pode voltar a desativar a permissão para instalar aplicações desconhecidas, se desejar.
+
+
+PARTE 9 - O QUE ACONTECE QUANDO ALTERAR O CÓDIGO
+=================================================
+
+O workflow está configurado para compilação manual, evitando gastar minutos de Actions sempre que alterar um ficheiro.
+
+Depois de modificar o projeto:
+
+42. Faça upload/commit das alterações no GitHub.
+
+43. Abra:
+
+   Actions -> Pet Passport - Android APK e AAB
+
+44. Prima:
+
+   Run workflow
+
+45. Escolha novamente:
+
+   both, apk ou aab
+
+46. Cada execução utiliza automaticamente um novo build number do GitHub.
+
+
+PARTE 10 - BUILD AUTOMÁTICO POR TAG
+===================================
+
+Além do botão manual, o workflow também compila automaticamente quando criar uma tag cujo nome comece por "v".
+
+Exemplos:
+
+   v1.0.0
+   v1.0.1
+   v2.0.0
+
+Isto é útil mais tarde para builds de versões/release.
+
+Não precisa de utilizar tags para a utilização normal; o botão "Run workflow" é suficiente.
+
+
+PARTE 11 - ASSINATURA ANDROID E GOOGLE PLAY
+===========================================
+
+IMPORTANTE:
+Sem configurar uma keystore própria, o Flet assina os builds de release com uma chave de debug.
+
+Isto é adequado para:
+
+   - testar a aplicação;
+   - instalar o APK diretamente no seu próprio Android;
+   - experimentar o projeto.
+
+Mas NÃO é a configuração final para publicar na Google Play Store.
+
+Para Google Play será necessário criar uma "upload keystore" privada e configurar no GitHub Secrets:
+
+   - ficheiro/keystore;
+   - alias;
+   - password da keystore;
+   - password da chave.
+
+NUNCA coloque a sua keystore nem as passwords diretamente no repositório público.
+
+Esta versão do workflow foi deliberadamente deixada sem credenciais privadas para poder ser utilizada imediatamente e com segurança para builds de teste.
+
+
+PARTE 12 - SE O BOTÃO "RUN WORKFLOW" NÃO APARECER
+===================================================
+
+Verifique estes pontos:
+
+A) O ficheiro existe exatamente em:
+
+   .github/workflows/build-android.yml
+
+B) O workflow já foi guardado/commitado na branch principal.
+
+C) Está no separador Actions e abriu o workflow correto.
+
+D) Actions não está desativado em:
+
+   Settings -> Actions -> General
+
+E) O pyproject.toml está na raiz do repositório.
+
+
+PARTE 13 - SE O BUILD FALHAR
+============================
+
+47. Abra a execução com o X vermelho.
+
+48. Abra primeiro:
+
+   Testes Python
+
+Se os testes tiverem passado, abra:
+
+   Compilar APK
+
+ou:
+
+   Compilar AAB
+
+49. Expanda o passo que apresenta erro e leia as últimas linhas do log.
+
+As causas mais comuns são:
+
+   - ficheiros enviados para uma subpasta errada;
+   - pyproject.toml fora da raiz;
+   - dependência Python incompatível com Android;
+   - ficheiro do projeto em falta;
+   - erro de sintaxe introduzido depois da versão original;
+   - falha temporária de download/toolchain.
+
+O workflow executa testes e compilação de sintaxe antes do build Android para detetar vários destes problemas antecipadamente.
+
+
+PARTE 14 - ESTRUTURA DO WORKFLOW INCLUÍDO
+=========================================
+
+O workflow utiliza atualmente:
+
+   actions/checkout@v6
+   actions/setup-python@v7
+   flet-dev/flet-build-action@v1
+   actions/upload-artifact@v7
+
+Python do runner:
+
+   3.12
+
+Python incluído na aplicação Android:
+
+   3.12
+
+Targets:
+
+   apk
+   aab
+
+Sistema de compilação:
+
+   ubuntu-latest
+
+Retenção dos artefactos definida no workflow:
+
+   30 dias
+
+
+RESUMO MUITO RÁPIDO
+===================
+
+1. Criar repositório GitHub.
+2. Colocar o conteúdo de PetPassport na raiz.
+3. Confirmar .github/workflows/build-android.yml.
+4. Abrir Actions.
+5. Abrir "Pet Passport - Android APK e AAB".
+6. Run workflow.
+7. Escolher "both".
+8. Esperar que a execução termine com sucesso.
+9. Abrir Artifacts.
+10. Descarregar PetPassport-APK-... e PetPassport-AAB-....
+11. Extrair e instalar o .apk no Android.
+
+FIM DO GUIA
