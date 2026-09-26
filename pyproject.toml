@@ -10,6 +10,12 @@ dependencies = [
   "segno==1.6.6",
 ]
 
+
+[dependency-groups]
+dev = [
+  "flet-cli==1.0.1",
+]
+
 [tool.flet.app]
 path = "src"
 module = "main"
