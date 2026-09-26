@@ -1,1 +1,129 @@
+name: Pet Passport - Android APK e AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "O que pretende compilar?"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - both
+          - apk
+          - aab
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petpassport-android-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    name: Testes Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Obter o código do repositório
+        uses: actions/checkout@v6
+
+      - name: Preparar Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Verificar sintaxe Python
+        run: python -m compileall -q src tests
+
+      - name: Executar testes
+        run: python -m unittest discover -s tests -v
+
+  build-apk:
+    name: Compilar APK
+    needs: tests
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.target == 'both' || github.event.inputs.target == 'apk' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Obter o código do repositório
+        uses: actions/checkout@v6
+
+      - name: Compilar APK com Flet
+        id: build
+        uses: flet-dev/flet-build-action@v1
+        with:
+          target: apk
+          runner-python-version: "3.12"
+          bundled-python-version: "3.12"
+          build-number: ${{ github.run_number }}
+          cache: true
+
+      - name: Guardar APK como artefacto
+        uses: actions/upload-artifact@v7
+        with:
+          name: PetPassport-APK-${{ github.run_number }}
+          path: ${{ steps.build.outputs.archive-path }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Resumo do APK
+        run: |
+          echo "### Pet Passport - APK criado" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artefacto: **PetPassport-APK-${{ github.run_number }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "O arquivo produzido pelo Flet contém o APK e os respetivos checksums." >> "$GITHUB_STEP_SUMMARY"
+
+  build-aab:
+    name: Compilar AAB
+    needs: tests
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.target == 'both' || github.event.inputs.target == 'aab' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Obter o código do repositório
+        uses: actions/checkout@v6
+
+      - name: Compilar AAB com Flet
+        id: build
+        uses: flet-dev/flet-build-action@v1
+        with:
+          target: aab
+          runner-python-version: "3.12"
+          bundled-python-version: "3.12"
+          build-number: ${{ github.run_number }}
+          cache: true
+
+      - name: Guardar AAB como artefacto
+        uses: actions/upload-artifact@v7
+        with:
+          name: PetPassport-AAB-${{ github.run_number }}
+          path: ${{ steps.build.outputs.archive-path }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Resumo do AAB
+        run: |
+          echo "### Pet Passport - AAB criado" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artefacto: **PetPassport-AAB-${{ github.run_number }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "O arquivo produzido pelo Flet contém o AAB e os respetivos checksums." >> "$GITHUB_STEP_SUMMARY"
 
